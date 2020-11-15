@@ -21,6 +21,9 @@ Other:
 DigitalOut redLED(PB_14);
 DigitalOut greenLED(PC_7);
 
+Watchdog &watch = Watchdog::get_instance();      // Initialize Watchdog
+#define wdTimeout 15000                         // Define watchdog timer
+void reset();                                   // Prototype ISR to reset watchdog  
 
 // main() runs in its own thread in the OS
 int main()
@@ -33,7 +36,19 @@ int main()
     GPIOB->MODER |= 0x00550000;             // Set 1s for Registers 8/9/10/11    
 
     while (true) {
+        // use variable "check" to obtain info on just the 8th bit (PB8)
+        int check = ~(0x0100);
+        check = GPIOB->IDR & check;
+        if(check == 0x0){                   // if PB8 = 0 so sound is detected so do nothing
+        
+        }
+        else if(check == 0x0100){           // if PB8 = 1 so no sound is detected so turn off power to unnecessary instruments
+
+        }
 
     }
 }
 
+void reset(){           // reset watchdog
+    watch.kick();
+}
