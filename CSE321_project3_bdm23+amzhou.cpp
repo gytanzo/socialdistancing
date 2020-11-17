@@ -26,9 +26,12 @@ Summary of File:
 DigitalOut redLED(PB_14);
 DigitalOut greenLED(PC_7);
 
-Watchdog &watch = Watchdog::get_instance();      // Initialize Watchdog
+Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 15000                         // Define watchdog timer
-void reset();                                   // Prototype ISR to reset watchdog  
+
+// Pre-define functions
+void reset();                                   // Prototype ISR to reset watchdog 
+void check(); 
 
 // main() runs in its own thread in the OS
 int main()
@@ -41,19 +44,34 @@ int main()
     GPIOB->MODER |= 0x00550000;             // Set 1s for Registers 8/9/10/11    
 
     while (true) {
-        // use variable "check" to obtain info on just the 8th bit (PB8)
-        int check = ~(0x0100);
-        check = GPIOB->IDR & check;
-        if(check == 0x0){                   // if PB8 = 0 so sound is detected so do nothing
-        
-        }
-        else if(check == 0x0100){           // if PB8 = 1 so no sound is detected so turn off power to unnecessary instruments
-
-        }
-
+        int PB8_value = check(8);           // What is the value of PB8?
+        int PB9_value = check(9);           // What is the value of PB9?
     }
 }
 
-void reset(){           // reset watchdog
+void check(int bit){
+    if (bit == 8) { // Get data on 8th bit (audio)
+        int check = ~(0x0100);
+        check = GPIOB->IDR & check;
+        if(check == 0x0){                   // If PB8 = 0 sound is detected
+            ;                               // Do nothing since no sound is detected
+        }
+        else if(check == 0x0100){           // If PB8 = 1, sound is detected 
+            ;                               // Do something with Watchdog here
+        }
+    }
+    else if (bit == 9) { // Get data on 9th bit (ultrasonic)
+        int check = ~(0x0100);
+        check = GPIOB->IDR & check;
+        if(check == 0x0){                   // if PB9 = 0 (something happens)
+        
+        }
+        else if(check == 0x0100){           // if PB9 = 1 (something happens)
+
+        }
+    }
+}
+
+void reset(){ // ISR to reset Watchdog
     watch.kick();
 }
