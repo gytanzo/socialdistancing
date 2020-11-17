@@ -29,7 +29,7 @@ DigitalOut greenLED(PC_7);
 Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 15000                         // Define watchdog timer
 void reset();                                   // Prototype ISR to reset watchdog  
-void startCount();                                // Prototype function to start counting.
+void startCount();                              // Prototype function to start counting.
 
 // Pre-define functions
 void reset();                                   // Prototype ISR to reset watchdog 
@@ -49,6 +49,7 @@ int main()
         int PB8_value = check(8);           // What is the value of PB8?
         int PB9_value = check(9);           // What is the value of PB9?
     }
+    return 0;
 }
 
 void check(int bit){
@@ -57,9 +58,11 @@ void check(int bit){
         check = GPIOB->IDR & check;
         if(check == 0x0){                   // If PB8 = 0 sound is detected
             ;                               // Do nothing since no sound is detected
+            printf("No Sound\n");
         }
         else if(check == 0x0100){           // If PB8 = 1, sound is detected 
             ;                               // Do something with Watchdog here
+            printf("Sound detected\n");
         }
     }
     else if (bit == 9) { // Get data on 9th bit (ultrasonic)
