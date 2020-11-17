@@ -33,7 +33,7 @@ void startCount();                              // Prototype function to start c
 
 // Pre-define functions
 void reset();                                   // Prototype ISR to reset watchdog 
-void check(); 
+int check(int);                                // Prototype check function
 
 // main() runs in its own thread in the OS
 int main()
@@ -52,29 +52,32 @@ int main()
     return 0;
 }
 
-void check(int bit){
-    if (bit == 8) { // Get data on 8th bit (audio)
+int check(int bit){
+    if (bit == 8) {                         // Get data on 8th bit (audio)
         int check = ~(0x0100);
         check = GPIOB->IDR & check;
         if(check == 0x0){                   // If PB8 = 0 sound is detected
             ;                               // Do nothing since no sound is detected
             printf("No Sound\n");
+            return 0;
         }
         else if(check == 0x0100){           // If PB8 = 1, sound is detected 
             ;                               // Do something with Watchdog here
             printf("Sound detected\n");
+            return 1;
         }
     }
-    else if (bit == 9) { // Get data on 9th bit (ultrasonic)
+    else if (bit == 9) {                    // Get data on 9th bit (ultrasonic)
         int check = ~(0x0100);
         check = GPIOB->IDR & check;
         if(check == 0x0){                   // if PB9 = 0 (something happens)
-        
+        return 0;
         }
         else if(check == 0x0100){           // if PB9 = 1 (something happens)
-
+        return 1;
         }
     }
+    return -1;
 }
 
 void reset(){ // ISR to reset Watchdog

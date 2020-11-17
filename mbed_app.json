@@ -1,4 +1,6 @@
-target_overrides":{
+{"target_overrides":{
     "*":{
         "platform.callback-nontrivial":true
+    }
+}
 }
