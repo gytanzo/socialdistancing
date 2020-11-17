@@ -56,16 +56,16 @@ int check(int bit){
     if (bit == 8) {                         // Get data on 8th bit (audio)
         int check = GPIOB->IDR;
         check = check >> 8;
-        check = check 
+        check &= ~(0xFFFE);
         printf("%d\n", check);
-        if(check == 0x0){                   // If PB8 = 0 sound is detected
+        if(check == 0x0){                   // If PB8 = 0, sound is detected
             ;                               // Do nothing since no sound is detected
-            printf("No Sound\n");
+            printf("Sound Detected\n");
             return 0;
         }
-        else if(check == 0x1){           // If PB8 = 1, sound is detected 
+        else if(check == 0x1){              // If PB8 = 1, no sound is detected 
             ;                               // Do something with Watchdog here
-            printf("Sound detected\n");
+            printf("No Sound\n");
             return 1;
         }
     }
