@@ -29,6 +29,8 @@ DigitalOut greenLED(PC_7);
 Watchdog &watch = Watchdog::get_instance();      // Initialize Watchdog
 #define wdTimeout 15000                         // Define watchdog timer
 void reset();                                   // Prototype ISR to reset watchdog  
+void startCount();                                // Prototype function to start counting.
+
 
 // main() runs in its own thread in the OS
 int main()
@@ -56,4 +58,8 @@ int main()
 
 void reset(){           // reset watchdog
     watch.kick();
+}
+
+void startCount(){
+    
 }
