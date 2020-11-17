@@ -1,20 +1,25 @@
 /*
-Author: Andrew Zhou and Ben Miller
-Purpose: Create a system that helps enforce social distancing.
-Assignment: Project 3
+File: CSE321_project3_bdm23+amzhou.cpp
 
-References: 
+Author 1: Ben Miller (bdm23@buffalo.edu)
+Author 2: Andrew Zhou (amzhou@buffalo.edu)
+Date: Fall 2020
+Partner: See authors
+Course: CSE321
 
-Other: 
-*/ 
-// Inputs: 2 Inputs. Ultrasonic and Audio Transucer.
-/* Outputs: 
-2 Outputs for on board LEDs (Red/Green). 
-1 Output for the seven segment display. 
-1 Output to tell Ultrasonic Transducer to check for sound. 
-1 LCD. 
-5 Outputs total.
+Summary of File:
+    
+    Purpose: Implement a social distancing enforcement system. 
+    Modules/Subroutines: reset(); (will fill out more as coding continues)
+    Assignment: Project 3. 
+    Input(s): An ultrasonic and audio transducer. 
+    Output(s): LEDs, an LCD, and a seven-segment display. 
+    Constraint(s): See documentation (specifically [Project 3] Part 3 A.pdf)
+    Source references: Any references will be in the documentation folder. 
+    
 */
+
+
 #include "mbed.h"
 
 // Set up Red and Green on board LEDs
