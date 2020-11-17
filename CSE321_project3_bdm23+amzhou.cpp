@@ -35,6 +35,10 @@ int check(int);                                 // Prototype check function
 void startCount();                              // Prototype function to start counting.
 void lcdwait();                                 // Prototype function for wait text
 void lcdgo();                                   // Prototype function for go text
+int distance();                                 // Prototype function for distance for ultrasonic transducer
+
+Timer timer;                                    // Initialize Timer
+
 
 // set up LCD
 CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);
@@ -56,10 +60,13 @@ int main()
             GPIOC -> ODR |= 0x3;            // Turn on LCD + ultrasonic transducer (and later 7-seg display)
             lcd.begin();
             lcd.print("You may walk.");     // First person gets to walk
+            distance();
             while(true){                    // After everything has been turned on
                 if (check(8) == 0x0){
                     watch.kick();
                 }
+                printf("%d\n", distance());
+
             }
         }
         else;                               // Sound not detected, do nothing 
@@ -72,26 +79,25 @@ int check(int bit){
         int check = GPIOB->IDR;
         check = check >> 8;
         check &= ~(0xFFFE);
-        printf("%d\n", check);
-        if(check == 0x0){                   // If PB8 = 0, sound is detected
-            ;                               // Do nothing since no sound is detected
-            printf("Sound Detected\n");
-            return 0;
+        if(check == 0x0){                   // If PB8 = 0, sound is detected                             
+            return 0;                       // Do nothing since no sound is detected
         }
         else if(check == 0x1){              // If PB8 = 1, no sound is detected 
-            ;                               // Do something with Watchdog here
-            printf("No Sound\n");
+                                          // Do something with Watchdog here
             return 1;
         }
     }
     else if (bit == 9) {                    // Get data on 9th bit (ultrasonic)
-        int check = ~(0x0100);
-        check = GPIOB->IDR & check;
-        if(check == 0x0){                   // if PB9 = 0 (something happens)
-        return 0;
+        int check = GPIOB->IDR;
+        check = check >> 9;
+        check &= ~(0xFFFE);
+        if(check == 0x0){                   // If PB9 = 0
+            printf("am zero");
+            return 0;
         }
-        else if(check == 0x0100){           // if PB9 = 1 (something happens)
-        return 1;
+        else if(check == 0x1){              // If PB9 = 1
+            printf("am one");
+            return 1;
         }
     }
     return -1;
@@ -111,4 +117,25 @@ void lcdgo(){
     lcd.clear();
     lcd.setCursor(0,1);
     lcd.print("You may walk.");
+}
+
+int distance(){
+    GPIOC->ODR |= 0x400;
+    while(check(9) == 0);
+    printf("Distance is run1\n");
+    timer.start();
+    printf("Distance is run2\n");
+    while(check(9) == 1);
+    printf("Distance is run3\n");
+    timer.stop();
+    printf("Distance is run4\n");
+    int inch = timer.read_us();
+    printf("Distance is run5\n");
+    inch = inch / 148;
+    printf("Distance is run6\n");
+    GPIOC->ODR &= ~(0x400);
+    printf("Distance is run7\n");
+    timer.reset();
+    printf("Distance is run8\n");
+    return inch;
 }
