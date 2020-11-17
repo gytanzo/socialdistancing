@@ -21,6 +21,7 @@ Summary of File:
 
 
 #include "mbed.h"
+#include "1802.h"                           // location of prototyping and definitions for 1802 LCD
 
 // Set up Red and Green on board LEDs
 DigitalOut redLED(PB_14);
@@ -28,26 +29,36 @@ DigitalOut greenLED(PC_7);
 
 Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 15000                         // Define watchdog timer
-void reset();                                   // Prototype ISR to reset watchdog  
-void startCount();                              // Prototype function to start counting.
 
 // Pre-define functions
 void reset();                                   // Prototype ISR to reset watchdog 
-int check(int);                                // Prototype check function
+int check(int);                                 // Prototype check function
+void startCount();                              // Prototype function to start counting.
+void lcdwait();                                 // Prototype function for wait text
+void lcdgo();                                   // Prototype function for go text
+
+// set up LCD
+CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);
+// PF0 = SDA, PF1 = SCL
 
 // main() runs in its own thread in the OS
 int main()
 {
+    lcd.begin();                            // Initialize LCD
     RCC->AHB2ENR |= 0x6;                    // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
-    GPIOC->MODER &= ~(0x000F0000);          // Set 0s for 8/9
+    GPIOB->MODER &= ~(0x000F0000);          // Set 0s for 8/9
     // Use Port C for outputs
-    GPIOB->MODER &= ~(0x00AA0000);          // Set 0s for Registers 8/9/10/11
-    GPIOB->MODER |= 0x00550000;             // Set 1s for Registers 8/9/10/11    
+    GPIOC->MODER &= ~(0x00AA0000);          // Set 0s for Registers 8/9/10/11
+    GPIOC->MODER |= 0x00550000;             // Set 1s for Registers 8/9/10/11    
 
     while (true) {
         int PB8_value = check(8);           // What is the value of PB8?
         int PB9_value = check(9);           // What is the value of PB9?
+        lcdgo();
+        thread_sleep_for(5000);
+        lcdwait();
+        thread_sleep_for(5000);
     }
     return 0;
 }
@@ -88,4 +99,16 @@ void reset(){ // ISR to reset Watchdog
 
 void startCount(){
     
+}
+
+void lcdwait(){
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("Please Wait.");
+}
+
+void lcdgo(){
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("You may walk.");
 }
