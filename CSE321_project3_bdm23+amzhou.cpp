@@ -31,7 +31,6 @@ Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 15000                         // Define watchdog timer
 
 // Pre-define functions
-void reset();                                   // Prototype ISR to reset watchdog 
 int check(int);                                 // Prototype check function
 void startCount();                              // Prototype function to start counting.
 void lcdwait();                                 // Prototype function for wait text
@@ -44,7 +43,6 @@ CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);
 // main() runs in its own thread in the OS
 int main()
 {
-    lcd.begin();                            // Initialize LCD
     RCC->AHB2ENR |= 0x6;                    // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
     GPIOB->MODER &= ~(0x000F0000);          // Set 0s for 8/9
@@ -52,13 +50,17 @@ int main()
     GPIOC->MODER &= ~(0x00AA0000);          // Set 0s for Registers 8/9/10/11
     GPIOC->MODER |= 0x00550000;             // Set 1s for Registers 8/9/10/11    
 
+    GPIOC -> ODR |= 0x100;
     while (true) {
-        int PB8_value = check(8);           // What is the value of PB8?
-        int PB9_value = check(9);           // What is the value of PB9?
-        lcdgo();
-        thread_sleep_for(5000);
-        lcdwait();
-        thread_sleep_for(5000);
+        if (check(8) == 0x0){               // Sound detected, turn everything on 
+            watch.start(wdTimeout);         // Start the watchdog
+            lcd.begin();
+            lcd.print("You may walk.");     // First person gets to walk
+            while(true){                    // After everything has been turned on
+                ;
+            }
+        }
+        else;                               // Sound not detected, do nothing 
     }
     return 0;
 }
@@ -93,12 +95,8 @@ int check(int bit){
     return -1;
 }
 
-void reset(){ // ISR to reset Watchdog
-    watch.kick();
-}
-
 void startCount(){
-    
+    ;
 }
 
 void lcdwait(){
