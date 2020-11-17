@@ -53,7 +53,7 @@ int main()
     while (true) {
         if (check(8) == 0x0){               // Sound detected, turn everything on 
             watch.start(wdTimeout);         // Start the watchdog
-            GPIOC -> ODR |= 0x1;            // Turn on LCD
+            GPIOC -> ODR |= 0x3;            // Turn on LCD + ultrasonic transducer (and later 7-seg display)
             lcd.begin();
             lcd.print("You may walk.");     // First person gets to walk
             while(true){                    // After everything has been turned on
