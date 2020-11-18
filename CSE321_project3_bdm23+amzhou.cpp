@@ -34,8 +34,6 @@ int check(int);                                 // Function to check value of pi
 void startCount();                              // Function for seven segment display timer
 void lcdwait();                                 // Function to print to LCD to tell person to wait
 void lcdgo();                                   // Function to print to LCD to give person permission to go
-long Timing();                                  // Will eventually be replaced with Ultrasonic.cpp
-long Ranging();                                 // Will eventually be replaced with Ultrasonic.cpp
 
 // Any other objects should be set up here
 
@@ -56,8 +54,6 @@ int main()
     lcd.begin();                            // Initialize LCD
     lcd.print("You may walk.");             // First person gets to walk
 
-    printf("--------START--------\n");
-
     while (true) {
         printf("Object was %ld inches away!\n", ultrasonic.Ranging(INC));
     } 
@@ -77,19 +73,22 @@ int check(int bit){                         // Returns the value of a bit given 
             return 1;
         }
     }
+
+    /*
+    I feel like this part of the code is now useless, but I'll check in with my partner before deleting it.
+
     else if (bit == 9) {                    // Get data on 9th bit (ultrasonic); same logic as above
         int check = GPIOB->IDR;
         check = check >> 9;
         check &= ~(0xFFFE);
         if(check == 0x0){                   // If PB9 = 0, echo is currently 1
-            printf("am zero");
             return 0;
         }
         else if(check == 0x1){              // If PB9 = 1, echo is current 0 
-            printf("am one");
             return 1;
         }
     }
+    */
     return -1;                              // If -1 gets returned, something very bad has happened
 }
 
