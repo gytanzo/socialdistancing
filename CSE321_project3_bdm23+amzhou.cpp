@@ -34,6 +34,8 @@ int check(int);                                 // Function to check value of pi
 void startCount();                              // Function for seven segment display timer
 void lcdwait();                                 // Function to print to LCD to tell person to wait
 void lcdgo();                                   // Function to print to LCD to give person permission to go
+long Timing();                                  // Will eventually be replaced with Ultrasonic.cpp
+long Ranging();                                 // Will eventually be replaced with Ultrasonic.cpp
 
 Timer timer;                                    // Initialize Timer
 // Any other objects should be set up here
@@ -43,7 +45,6 @@ CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);     // PF0 = SDA, PF1 = SCL
 
 int main()
 {
-    printf("At the beginning of main.\n");
     RCC->AHB2ENR |= 0x6;                    // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
     GPIOB->MODER &= ~(0xF0000);             // Set 0s for 8/9
@@ -55,13 +56,36 @@ int main()
     lcd.begin();                            // Initialize LCD
     lcd.print("You may walk.");             // First person gets to walk
 
+    printf("--------START--------\n");
+
     while (true) {
-        printf("True");
-        if (check(8) == 0x0){       // Will later be replaced to check ultrasonic
-            ;    
-        }
+        Ranging();
     } 
+
     return 0;                               // Precaution against errors
+}
+
+long Timing(){
+    timer.reset();                          // Reset timer 
+    GPIOC -> ODR &= ~(0x400);               // Turn trigger off 
+    wait_us(2);                             // Wait for 2 us
+    GPIOC -> ODR |= 0x400;                  // Turn trigger on
+    wait_us(10);                            // Wait for 10 us
+    GPIOC -> ODR &= ~(0x400);               // Turn trigger off
+    while (!(GPIOB -> IDR >> 9));           // Echo pin is sending...
+    timer.start();                          // Turn timer on
+    while (GPIOB -> IDR >> 9);              // Echo pin is receiving...
+    timer.stop();                           // Turn timer off
+    long time = timer.elapsed_time().count();
+    
+    return time;                            // Return the duration of the echo
+}
+
+long Ranging(){
+    long duration = Timing();               // Run the function to power the ultrasonic transducer
+    long distance_inc = duration / 74 / 2;  // Convert the duration into a distance
+    printf("Object was %ld inches away!\n", distance_inc);
+    return 0;
 }
 
 int check(int bit){                         // Returns the value of a bit given its pin
