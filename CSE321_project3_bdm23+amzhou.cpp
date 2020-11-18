@@ -37,11 +37,11 @@ void lcdgo();                                   // Function to print to LCD to g
 long Timing();                                  // Will eventually be replaced with Ultrasonic.cpp
 long Ranging();                                 // Will eventually be replaced with Ultrasonic.cpp
 
-Timer timer;                                    // Initialize Timer
 // Any other objects should be set up here
 
 // set up LCD
 CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);     // PF0 = SDA, PF1 = SCL
+Ultrasonic ultrasonic(PC_10, PB_9);             // PC_10 is TP, PB_9 is EP; these values are not used but rather included for transparency and ease of understanding
 
 int main()
 {
@@ -59,33 +59,10 @@ int main()
     printf("--------START--------\n");
 
     while (true) {
-        Ranging();
+        printf("Object was %ld inches away!\n", ultrasonic.Ranging(INC));
     } 
 
     return 0;                               // Precaution against errors
-}
-
-long Timing(){
-    timer.reset();                          // Reset timer 
-    GPIOC -> ODR &= ~(0x400);               // Turn trigger off 
-    wait_us(2);                             // Wait for 2 us
-    GPIOC -> ODR |= 0x400;                  // Turn trigger on
-    wait_us(10);                            // Wait for 10 us
-    GPIOC -> ODR &= ~(0x400);               // Turn trigger off
-    while (!(GPIOB -> IDR >> 9));           // Echo pin is sending...
-    timer.start();                          // Turn timer on
-    while (GPIOB -> IDR >> 9);              // Echo pin is receiving...
-    timer.stop();                           // Turn timer off
-    long time = timer.elapsed_time().count();
-    
-    return time;                            // Return the duration of the echo
-}
-
-long Ranging(){
-    long duration = Timing();               // Run the function to power the ultrasonic transducer
-    long distance_inc = duration / 74 / 2;  // Convert the duration into a distance
-    printf("Object was %ld inches away!\n", distance_inc);
-    return 0;
 }
 
 int check(int bit){                         // Returns the value of a bit given its pin

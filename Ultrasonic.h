@@ -17,20 +17,20 @@
 
 #include "mbed.h"
 
-#define CM 1                                    // Put units in centimeters
-#define INC 0                                   // Put units in inches
+#define CM 1                                                                // Put units in centimeters
+#define INC 0                                                               // Put units in inches
 
 class Ultrasonic
 {
-  public:                                       // Viewable outside 
-    Ultrasonic(DigitalOut TP, DigitalIn EP);    // TP = Trigger pin, EP = Echo pin
-    long Timing();                              // Defined in Ultrasonic.cpp
-    long Ranging(int sys);                      // Defined in Ultrasonic.cpp
+  public:                                                                   // Viewable outside 
+    Ultrasonic(PinName TP, PinName EP);                                     // TP = Trigger pin, EP = Echo pin
+    long Timing();                                                          // Defined in Ultrasonic.cpp
+    long Ranging(int unit);                                                 // Defined in Ultrasonic.cpp
 
-    private:                                    // Not viewable outside
-    int Trig_pin;
-    int Echo_pin;
-    long duration, distance_cm, distance_inc;
+    private:                                                                // Not viewable outside
+    long duration;                                                          // Duration of the echo pulse
+    long distance_cm;                                                       // Distance in centimeters
+    long distance_inc;                                                      // Distance in inches
     
 };
 
