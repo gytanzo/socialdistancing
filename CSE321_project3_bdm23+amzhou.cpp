@@ -51,15 +51,14 @@ int main()
     GPIOC->MODER &= ~(0xAA002A);            // Set 0s for Registers 0/1/2/8/9/10/11
     GPIOC->MODER |= 0x550015;               // Set 1s for Registers 0/1/2/8/9/10/11    
 
+    GPIOC -> ODR |= 0x3;                    // Turn on LCD (and ultrasonic transducer's old port)
+    lcd.begin();                            // Initialize LCD
+    lcd.print("You may walk.");             // First person gets to walk
+
     while (true) {
-        watch.start(wdTimeout);         // Start watchdog
-        GPIOC -> ODR |= 0x3;            // Turn on LCD, ultrasonic transducer, (and later) seven segment display
-        lcd.begin();                    // Initialize LCD
-        lcd.print("You may walk.");     // First person gets to walk
-        while(true){                    
-            if (check(8) == 0x0){       // Will later be replaced to check ultrasonic
-                watch.kick();           // Kick the dog
-            }
+        printf("True");
+        if (check(8) == 0x0){       // Will later be replaced to check ultrasonic
+            ;    
         }
     } 
     return 0;                               // Precaution against errors
