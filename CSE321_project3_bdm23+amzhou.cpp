@@ -81,35 +81,35 @@ int main()
             }
         } 
     }
-    return 0;                               // Precaution against errors
+    return 0;                                   // Precaution against errors
 }
 
-int check(int bit){                         // Returns the value of a bit given its pin
-    if (bit == 8) {                         // Get data on 8th bit (audio)
-        int check = GPIOB->IDR;             // Output is in GPIOB IDR
-        check = check >> 8;                 // Shift right eight bits, this just makes masking easier
-        check &= ~(0xFFFE);                 // Mask every bit except the one we want to check
-        if(check == 0x0){                   // If PB8 = 0, sound is detected                             
+int check(int bit){                             // Returns the value of a bit given its pin
+    if (bit == 8) {                             // Get data on 8th bit (audio)
+        int check = GPIOB->IDR;                 // Output is in GPIOB IDR
+        check = check >> 8;                     // Shift right eight bits, this just makes masking easier
+        check &= ~(0xFFFE);                     // Mask every bit except the one we want to check
+        if(check == 0x0){                       // If PB8 = 0, sound is detected                             
             return 0;                       
         }
-        else if(check == 0x1){              // If PB8 = 1, no sound is detected 
+        else if(check == 0x1){                  // If PB8 = 1, no sound is detected 
             return 1;
         }
     }
-    return -1;                              // If -1 gets returned, something very bad has happened
+    return -1;                                  // If -1 gets returned, something very bad has happened
 }
 
-void startCount(){                          // Andrew is eventually going to do something with this
+void startCount(){                              // Andrew is eventually going to do something with this
     ;
 }
 
-void lcdwait(){                             // Tell person to kindly wait for their turn
+void lcdwait(){                                 // Tell person to kindly wait for their turn
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Please Wait.");
 }
 
-void lcdgo(){                               // Give whoever is wait the go-ahead 
+void lcdgo(){                                   // Give whoever is wait the go-ahead 
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("You may walk.");
