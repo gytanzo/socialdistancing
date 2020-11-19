@@ -84,21 +84,6 @@ int check(int bit){                         // Returns the value of a bit given 
             return 1;
         }
     }
-
-    /*
-    I feel like this part of the code is now useless, but I'll check in with my partner before deleting it.
-    else if (bit == 9) {                    // Get data on 9th bit (ultrasonic); same logic as above
-        int check = GPIOB->IDR;
-        check = check >> 9;
-        check &= ~(0xFFFE);
-        if(check == 0x0){                   // If PB9 = 0, echo is currently 1
-            return 0;
-        }
-        else if(check == 0x1){              // If PB9 = 1, echo is current 0 
-            return 1;
-        }
-    }
-    */
     return -1;                              // If -1 gets returned, something very bad has happened
 }
 
