@@ -34,7 +34,7 @@ DigitalOut redLED(PB_14);
 DigitalOut greenLED(PC_7);
 
 Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
-#define wdTimeout 15000                         // Define watchdog timer as 15 seconds
+#define wdTimeout 30000                         // Define watchdog timer as 30 seconds
 
 // Pre-define functions
 int check(int);                                 // Function to check value of pins
@@ -48,24 +48,36 @@ Ultrasonic ultrasonic(PC_10, PB_9);             // PC_10 is TP, PB_9 is EP; thes
 
 int main()
 {
-    RCC->AHB2ENR |= 0x6;                    // Enable Clock for GPIOC and GPIOB
+    RCC->AHB2ENR |= 0x6;                        // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
-    GPIOB->MODER &= ~(0xF0000);             // Set 0s for 8/9
+    GPIOB->MODER &= ~(0xF0000);                 // Set 0s for 8/9
     // Use Port C for outputs
-    GPIOC->MODER &= ~(0xAA002A);            // Set 0s for Registers 0/1/2/8/9/10/11
-    GPIOC->MODER |= 0x550015;               // Set 1s for Registers 0/1/2/8/9/10/11    
+    GPIOC->MODER &= ~(0xAA002A);                // Set 0s for Registers 0/1/2/8/9/10/11
+    GPIOC->MODER |= 0x550015;                   // Set 1s for Registers 0/1/2/8/9/10/11    
 
     while (true) {
-        if (check(8) == 0x0){               // Sound detected; turn everything on 
-            watch.start(wdTimeout);         // Start watchdog
-            GPIOC -> ODR |= 0x3;            // Turn on LCD, ultrasonic transducer, (and later) seven segment display
-            lcd.begin();                    // Initialize LCD
-            lcd.print("You may walk.");     // First person gets to walk=
-            while(true){                    
-                if (check(8) == 0x0){       // Will later be replaced to check ultrasonic
-                    watch.kick();           // Kick the dog
+        if (check(8) == 0x0){                   // Sound detected; turn everything on 
+            watch.start(wdTimeout);             // Start watchdog
+            GPIOC -> ODR |= 0x7;                // Turn on LCD, ultrasonic transducer, (and later) seven segment display
+            lcd.begin();                        // Initialize LCD
+            lcd.print("You may walk.");         // First person gets to walk
+
+            long base = ultrasonic.Ranging(INC);    // Base distance detected
+
+            while (base > 156) {                // Edge case where distance jumpts up to 475 in
+                base = ultrasonic.Ranging(INC); // Re-adjust base value
+            } 
+            while(true){     
+                long distance = ultrasonic.Ranging(INC);
+                if (distance <= 156){           // Edge case where distance jumps up to 475 in
+                    long difference = base - distance;
+                    if (difference < 0){        // Find absolute value of difference
+                        difference = difference * -1;
+                    }
+                    if (difference > 5){        // Value sometimes bounces, this solves that issue
+                        watch.kick();
+                    }
                 }
-                printf("Object was %ld inches away!\n", ultrasonic.Ranging(INC));
             }
         } 
     }
