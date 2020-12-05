@@ -29,6 +29,7 @@ Summary of File:
 #include "1802.h"                               // location of prototyping and definitions for 1802 LCD
 #include "Ultrasonic.h"                         // location of prototyping and definitions for ultrasonic transducer
 #include "DigitDisplay.h"                       // location of prototyping and definitions for seven segment display
+#include <cstdint>
 
 // Set red and green onboard LEDs as digital outputs
 DigitalOut redLED(PB_14);                   
@@ -46,11 +47,10 @@ void lcdgo();                                   // Function to print to LCD to g
 // set up LCD
 CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);     // PF0 = SDA, PF1 = SCL
 Ultrasonic ultrasonic(PC_10, PB_9);             // PC_10 is TP, PB_9 is EP; these values are not used but rather included for transparency and ease of understanding
-DigitDisplay digitDisplay(PC_8, PC_9);          // PC_8 = CLK, PC_9 = DIO
+DigitDisplay dd(PC_4, PC_5);                    // dd is digital display; PC_8 = CLK, PC_9 = DIO
 
 int main()
 {
-    digitDisplay.on();
     RCC->AHB2ENR |= 0x6;                        // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
     GPIOB->MODER &= ~(0xF0000);                 // Set 0s for 8/9
@@ -62,6 +62,13 @@ int main()
         if (check(8) == 0x0){                   // Sound detected; turn everything on 
             watch.start(wdTimeout);             // Start watchdog
             GPIOC -> ODR |= 0x7;                // Turn on LCD, ultrasonic transducer, (and later) seven segment display
+
+            dd.on();
+            dd.clear();
+            dd.on();
+            dd.write(32);
+            dd.on();
+
             lcd.begin();                        // Initialize LCD
             lcd.print("You may walk.");         // First person gets to walk
 
