@@ -55,8 +55,8 @@ int main()
     // Use Port B for inputs
     GPIOB->MODER &= ~(0xF0000);                 // Set 0s for 8/9
     // Use Port C for outputs
-    GPIOC->MODER &= ~(0xA0002A);                // Set 0s for Registers 0/1/2/10/11
-    GPIOC->MODER |= 0x500015;                   // Set 1s for Registers 0/1/2/10/11    
+    GPIOC->MODER &= ~(0x20002A);                // Set 0s for Registers 0/1/2/10
+    GPIOC->MODER |= 0x100015;                   // Set 1s for Registers 0/1/2/10    
 
     while (true) {
         if (check(8) == 0x0){                   // Sound detected; turn everything on 
