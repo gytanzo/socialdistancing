@@ -51,9 +51,9 @@ DigitDisplay dd(PC_4, PC_5);                    // dd is digital display; PC_8 =
 
 int main()
 {
-            dd.on();                            // Initialize 7-Seg Display
-            dd.clear();                         // Clear anything leftover 
-            dd.write(48);
+    dd.on();                            // Initialize 7-Seg Display
+    dd.clear();                         // Clear anything leftover 
+    dd.write(56);
     RCC->AHB2ENR |= 0x6;                        // Enable Clock for GPIOC and GPIOB
     // Use Port B for inputs
     GPIOB->MODER &= ~(0xF0000);                 // Set 0s for 8/9
