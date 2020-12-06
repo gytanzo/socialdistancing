@@ -63,11 +63,9 @@ int main()
             watch.start(wdTimeout);             // Start watchdog
             GPIOC -> ODR |= 0x7;                // Turn on LCD, ultrasonic transducer, (and later) seven segment display
 
-            dd.on();
-            dd.clear();
-            dd.on();
-            dd.write(32);
-            dd.on();
+            dd.on();                            // Initialize 7-Seg Display
+            dd.clear();                         // Clear anything leftover 
+            dd.write(46);
 
             lcd.begin();                        // Initialize LCD
             lcd.print("You may walk.");         // First person gets to walk
