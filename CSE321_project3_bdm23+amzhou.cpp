@@ -47,7 +47,7 @@ void lcdgo();                                   // Function to print to LCD to g
 // set up LCD
 CSE321_LCD lcd(16,2,LCD_5x8DOTS,PF_0,PF_1);     // PF0 = SDA, PF1 = SCL
 Ultrasonic ultrasonic(PC_10, PB_9);             // PC_10 is TP, PB_9 is EP; these values are not used but rather included for transparency and ease of understanding
-DigitDisplay dd(PC_4, PC_5);                    // dd is digital display; PC_8 = CLK, PC_9 = DIO
+DigitDisplay dd(PC_4, PC_5);                    // dd is digital display; PC_4 = CLK, PC_5 = DIO
 
 int main()
 {
