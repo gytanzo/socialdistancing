@@ -84,15 +84,15 @@ int main()
                         difference = difference * -1;
                     }
                     if (difference > 10){        // Value sometimes bounces, this solves that issue
-                        watch.kick();
-                        timeLeft = 3000;
+                        watch.kick();            // Kick the Watchdog
+                        timeLeft = 3000;         // Person needs to wait for three seconds
                         tick.attach(&startCount, .001);
-                        lcdwait();
+                        lcdwait();               // Tell the person to wait
                         while(timeLeft > 0){
-                            printf("%d\n", timeLeft);
+                            printf("%d\n", timeLeft);   // For some reason code doesn't work without this print
                         }
-                        tick.detach();
-                        lcdgo();
+                        tick.detach();           // Detach ticker
+                        lcdgo();                 // Tell the person they can go 
                     }
                 }
             }
