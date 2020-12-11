@@ -33,6 +33,8 @@ Summary of File:
 
 Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 30000                         // Define watchdog timer as 30 seconds
+                                                // Per Scheduling Part 2, Watchdogs can be used for scheduling
+                                                // However, since it is required, we also have one more method of scheduling
 
 // Pre-define functions
 int check(int);                                 // Function to check value of pins
@@ -60,9 +62,12 @@ int main()
     GPIOC->MODER |= 0x100015;                   // Set 1s for Registers 0/1/2/10   
 
     while (true) {
-        if (check(8) == 0x0){                   // Sound detected; turn everything on 
+        if (check(8) == 0x0){                   // Sound detected; turn everything on
+                                                // This is our direct bitwise driver
+                                                // The helper function checks the bitwise outputs of the audio transducer and uses them  
             watch.start(wdTimeout);             // Start watchdog
             GPIOC -> ODR |= 0x3;                // Turn on LCD, ultrasonic transducer
+                                                // This power control is our second form of scheduling
 
             lcd.begin();                        // Initialize LCD
             lcdgo();                            // First person gets to walk
@@ -82,7 +87,7 @@ int main()
                     if (difference > 10){        // Value sometimes bounces, this solves that issue
                         watch.kick();            // Kick the Watchdog
                         timeLeft = 3000;         // Person needs to wait for three seconds
-                        tick.attach(&startCount, .001);
+                        tick.attach(&startCount, .001); // Ignore this error, the code functions fine
                         lcdwait();               // Tell the person to wait
                         while(timeLeft > 0){
                             printf("%d\n", timeLeft);   // For some reason code doesn't work without this print
