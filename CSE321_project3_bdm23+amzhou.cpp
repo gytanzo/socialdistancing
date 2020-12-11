@@ -31,10 +31,6 @@ Summary of File:
 #include "DigitDisplay.h"                       // location of prototyping and definitions for seven segment display
 #include <cstdint>
 
-// Set red and green onboard LEDs as digital outputs
-DigitalOut redLED(PB_14);                   
-DigitalOut greenLED(PC_7);
-
 Watchdog &watch = Watchdog::get_instance();     // Initialize Watchdog
 #define wdTimeout 30000                         // Define watchdog timer as 30 seconds
 
@@ -66,7 +62,7 @@ int main()
     while (true) {
         if (check(8) == 0x0){                   // Sound detected; turn everything on 
             watch.start(wdTimeout);             // Start watchdog
-            GPIOC -> ODR |= 0x7;                // Turn on LCD, ultrasonic transducer, (and later) seven segment display
+            GPIOC -> ODR |= 0x3;                // Turn on LCD, ultrasonic transducer
 
             lcd.begin();                        // Initialize LCD
             lcdgo();                            // First person gets to walk
@@ -116,10 +112,10 @@ int check(int bit){                             // Returns the value of a bit gi
     return -1;                                  // If -1 gets returned, something very bad has happened
 }
 
-void startCount(){                              // Andrew is eventually going to do something with this
+void startCount(){                              // Handles printing for the seven segment display
     timeLeft -= 1;
-    if (timeLeft >= 0){
-        dd.write(timeLeft);
+    if (timeLeft >= 0){                         // If there is still time left
+        dd.write(timeLeft);                     // Print the remaining amount of time
     }
 }
 
